@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Home - VideoHub{% endblock %}
+
+{% block body %}
+<div class="container">
+    <!-- Categories Filter -->
+    <div class="categories-bar">
+        <button class="category-chip active" data-category="all">
+            <i class="fas fa-home"></i> For You
+        </button>
+        <button class="category-chip" data-category="entertainment">
+            <i class="fas fa-film"></i> Entertainment
+        </button>
+        <button class="category-chip" data-category="education">
+            <i class="fas fa-graduation-cap"></i> Education
+        </button>
+        <button class="category-chip" data-category="technology">
+            <i class="fas fa-laptop-code"></i> Technology
+        </button>
+        <button class="category-chip" data-category="lifestyle">
+            <i class="fas fa-heart"></i> Lifestyle
+        </button>
+        <button class="category-chip" data-category="news">
+            <i class="fas fa-newspaper"></i> News
+        </button>
+    </div>
+    
+    <!-- Video Grid -->
+    <div class="video-grid" id="videoGrid">
+        <!-- Videos loaded dynamically -->
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading recommendations...</p>
+        </div>
+    </div>
+    
+    <!-- Load More -->
+    <div class="text-center mt-4">
+        <button class="btn btn-outline" id="loadMoreBtn">Load More</button>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="{% static 'js/home.js' %}"></script>
+{% endblock %}
+
+{% endblock %}

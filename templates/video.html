@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ video.title }} - VideoHub{% endblock %}
+
+{% block body %}
+<div class="video-player-container">
+    <div class="player-wrapper">
+        <!-- Video Player -->
+        <div class="video-player">
+            <video id="mainVideo" controls autoplay>
+                <source src="{{ video.video_file.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        
+        <!-- Video Info -->
+        <div class="video-info-section">
+            <h1 class="video-title-large">{{ video.title }}</h1>
+            
+            <div class="video-actions-bar">
+                <div class="creator-info">
+                    <img src="{% if video.creator.profile_picture %}{{ video.creator.profile_picture.url }}{% else %}/static/images/default-avatar.png{% endif %}" 
+                         alt="{{ video.creator.username }}"
+                         class="creator-avatar-large">
+                    <div>
+                        <h3>{{ video.creator.username }}</h3>
+                        <p class="subscriber-count">{{ video.creator.follower_count }} followers</p>
+                    </div>
+                    <button class="btn btn-primary" id="followBtn" data-user-id="{{ video.creator.id }}">
+                        <i class="fas fa-user-plus"></i> Follow
+                    </button>
+                </div>
+                
+                <div class="video-actions">
+                    <button class="action-btn" id="likeBtn" data-video-id="{{ video.video_id }}">
+                        <i class="fas fa-heart"></i>
+                        <span id="likeCount">{{ video.likes }}</span>
+                    </button>
+                    <button class="action-btn">
+                        <i class="fas fa-share"></i>
+                        Share
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Description -->
+            <div class="video-description">
+                <div class="description-header">
+                    <span class="view-count">{{ video.views }} views</span>
+                    <span class="upload-date">{{ video.created_at|date:"M d, Y" }}</span>
+                </div>
+                <p class="description-text">{{ video.description }}</p>
+                
+                <!-- Categories -->
+                <div class="video-categories">
+                    {% for category in video.categories.all %}
+                    <span class="category-tag">{{ category.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar - Recommended Videos -->
+    <div class="recommendations-sidebar">
+        <h3>Recommended</h3>
+        <div id="recommendedVideos">
+            <!-- Loaded dynamically -->
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+
+<script src="{% static 'js/video.js' %}"></script>
+
+{% endblock %}
+
+{% endblock %}

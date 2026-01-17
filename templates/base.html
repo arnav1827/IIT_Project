@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VideoHub{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="/" class="logo">
+                    <i class="fas fa-video"></i>
+                    <span>VideoHub</span>
+                </a>
+                
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search videos, users, categories...">
+                </div>
+            </div>
+            
+            <div class="nav-right">
+                {% if user.is_authenticated %}
+                    <a href="/" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="/following/" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        <span>Following</span>
+                    </a>
+                    <a href="/explore/" class="nav-link">
+                        <i class="fas fa-compass"></i>
+                        <span>Explore</span>
+                    </a>
+                    <a href="/upload/" class="nav-link upload-btn">
+                        <i class="fas fa-plus"></i>
+                        <span>Upload</span>
+                    </a>
+                    
+                    <div class="user-menu">
+                        <img src="{% if profile_user.profile_picture %}{{ profile_user.profile_picture.url }}{% else %}/static/images/default-avatar.png{% endif %}"  
+                             alt="{{ user.username }}" 
+                             class="user-avatar"
+                             id="userMenuBtn">
+                        
+                        <div class="dropdown-menu" id="userDropdown">
+                            <a href="/profile/{{ user.username }}/">
+                                <i class="fas fa-user"></i> Profile
+                            </a>
+                            <a href="#" id="settingsBtn">
+                                <i class="fas fa-cog"></i> Settings
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="#" class="btn btn-outline" id="loginBtn">Login</a>
+                    <a href="#" class="btn btn-primary" id="signupBtn">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block body %}
+        
+        {% endblock %}
+    </main>
+
+    <!-- Auth Modals -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                </form>
+                <p class="text-center mt-3">
+                    Don't have an account? <a href="#" id="switchToSignup">Sign up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Sign Up</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="interests">Select Your Interests</label>
+                        <div class="interests-checkboxes" id="interestsContainer">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                </form>
+                <p class="text-center mt-3">
+                    Already have an account? <a href="#" id="switchToLogin">Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notifications -->
+    <div id="toastContainer"></div>
+
+    <script src = "{% static 'js/app.js' %}"></script>
+    {% block extra_js %}
+    <script>
+        async function loadParentCategories(){
+            try{
+                const response = await fetch('/api/categories/parent/');
+                const categories = await response.json()
+                const container = document.getElementById('interestsContainer')
+                container.innerHTML = categories.map(cat => `
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" 
+                            name="interests" value="${cat.id}" id="interest_${cat.id}">
+                        <label class="form-check-label" for="interest_${cat.id}">
+                            ${cat.name}
+                        </label>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading categories:', error);
+                    }
+        }
+
+        loadParentCategories()
+
+        function getSelectedInterests() {
+            return Array.from(document.querySelectorAll('input[name="interests"]:checked')).map(cb => parseInt(cb.value));
+        }
+    </script>
+    
+    {% endblock %}
+</body>
+</html>

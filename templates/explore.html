@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Explore - VideoHub{% endblock %}
+
+{% block body %}
+<div class="explore-container">
+    <h1>Explore Videos</h1>
+    <div id="videosGrid" class="videos-grid">
+        <!-- Videos loaded dynamically -->
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="{% static 'js/explore.js' %}"></script>
+{% endblock %}
+
+{% endblock %}

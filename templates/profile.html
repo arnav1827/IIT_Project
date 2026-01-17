@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ profile_user.username }} - VideoHub{% endblock %}
+
+{% block body %}
+<div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <img src="{% if profile_user.profile_picture %}{{ profile_user.profile_picture.url }}{% else %}/static/images/default-avatar.png{% endif %}"
+             alt="{{ profile_user.username }}" 
+             class="profile-avatar-large">
+        
+        <div class="profile-info">
+            <h1>{{ profile_user.username }}</h1>
+            <p class="profile-bio">{{ profile_user.bio }}</p>
+            
+            <div class="profile-stats">
+                <div class="stat">
+                    <strong id="videoCount">{{ profile_user.video_count }}</strong>
+                    <span>Videos</span>
+                </div>
+                <div class="stat">
+                    <strong id="followerCount">{{ profile_user.follower_count }}</strong>
+                    <span>Followers</span>
+                </div>
+                <div class="stat">
+                    <strong id="followingCount">{{ profile_user.following_count }}</strong>
+                    <span>Following</span>
+                </div>
+            </div>
+            
+            {% if user.is_authenticated and user.id != profile_user.id %}
+            <button class="btn btn-primary" id="followUserBtn" data-user-id="{{ profile_user.id }}">
+                <i class="fas fa-user-plus"></i> Follow
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Tabs -->
+    <div class="profile-tabs">
+        <button class="tab-btn active" data-tab="videos">
+            <i class="fas fa-video"></i> Videos
+        </button>
+        <button class="tab-btn" data-tab="liked">
+            <i class="fas fa-heart"></i> Liked
+        </button>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="tab-content active" id="videosTab">
+        <div class="video-grid" id="userVideos">
+        </div>
+    </div>
+    
+    <div class="tab-content" id="likedTab">
+        <div class="video-grid" id="likedVideos">
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    const profileUserId = "{{ profile_user.id }}";
+    const profileUsername = "{{ profile_user.username }}";
+</script>
+<script src = "{% static 'js/profile.js' %}"></script>
+{% endblock %}
+
+{% endblock %}
